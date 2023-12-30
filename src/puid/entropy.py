@@ -5,7 +5,7 @@ from puid.chars_error import InvalidChars
 from puid.puid_error import TotalRiskError
 
 
-def bits_for_total_risk(total: int, risk: int) -> float:
+def bits_for_total_risk(total: int, risk: float) -> float:
     """
     Entropy bits necessary to produce a `total` `puid`s with given `risk` of repeat
 
@@ -18,7 +18,7 @@ def bits_for_total_risk(total: int, risk: int) -> float:
     """
 
     if total < 0 or risk < 0:
-        raise TotalRiskError('total and risk must be non-negative integers')
+        raise TotalRiskError('total and risk must be non-negative')
 
     if total in [0, 1]:
         return 0

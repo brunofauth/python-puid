@@ -39,9 +39,6 @@ class Charset:
         return instance
 
 
-print(type(Charset))
-
-
 def is_valid_charset(chars: str) -> bool:
     min_len = 2
     max_len = 256

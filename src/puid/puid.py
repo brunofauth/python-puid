@@ -30,7 +30,7 @@ class Puid:
     def from_risk(
         cls,
         total: int,
-        risk: int,
+        risk: float,
         charset: Charsets | str = Charsets.SAFE64,
         entropy_source: Callable[[int | None], bytes] = secrets.token_bytes,
     ) -> Puid:

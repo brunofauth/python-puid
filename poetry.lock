@@ -12,6 +12,22 @@ files = [
 ]
 
 [[package]]
+name = "funparse"
+version = "0.4.0"
+description = "`funparse` allows you to 'derive' an argument parser from type annotations of a function's signature, cutting down on the boilerplate code."
+optional = false
+python-versions = ">=3.11,<4.0"
+files = [
+    {file = "funparse-0.4.0.tar.gz", hash = "sha256:255bbd4315110bc8c02c4d861c9030b1ff635324ae51c26a8efe87185de0f3ac"},
+]
+
+[package.dependencies]
+typing-extensions = ">=4.8.0,<5.0.0"
+
+[package.extras]
+docstring = ["docstring-parser (>=0.15,<0.16)"]
+
+[[package]]
 name = "iniconfig"
 version = "2.0.0"
 description = "brain-dead simple config-ini parsing"
@@ -226,4 +242,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "90892b8c17532dd3b697030b444ee23e65e49a3e1f5a246f3e18ec247e309426"
+content-hash = "c025a1a33dcc244086f42bd534755a4fe91832fb5bbecda2092eeea57de2f95d"
