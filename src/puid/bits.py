@@ -31,9 +31,7 @@ def bit_shifts(n_chars):
     def shift(bit):
         return (base_value | pow2(bit) - 1, n_bits_per_char - bit + 1)
 
-    return [base_shift] + [
-        shift(bit) for bit in range(2, n_bits_per_char) if is_bit_zero(bit)
-    ]
+    return [base_shift] + [shift(bit) for bit in range(2, n_bits_per_char) if is_bit_zero(bit)]
 
 
 def fill_entropy(entropy_offset, entropy_bytes, entropy_fn):
@@ -47,12 +45,10 @@ def fill_entropy(entropy_offset, entropy_bytes, entropy_fn):
         offset_byte_num = floor(entropy_offset / 8)
 
         # Move unused bytes to the left
-        entropy_bytes[0:n_bytes -
-                      offset_byte_num] = entropy_bytes[offset_byte_num:n_bytes]
+        entropy_bytes[0:n_bytes - offset_byte_num] = entropy_bytes[offset_byte_num:n_bytes]
 
         # Fill right bytes with new random values
-        entropy_bytes[n_bytes -
-                      offset_byte_num:n_bytes] = entropy_fn(offset_byte_num)
+        entropy_bytes[n_bytes - offset_byte_num:n_bytes] = entropy_fn(offset_byte_num)
 
     return entropy_offset % 8
 

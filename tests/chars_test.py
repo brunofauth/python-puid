@@ -20,7 +20,7 @@ def test_chars_out_of_bounds():
 
 def test_chars_not_unique():
     with pytest.raises(NonUniqueChars):
-        is_valid_charset("unique")
+        Charset.custom("non-unique")
 
 
 def test_invalid_chars():
@@ -70,8 +70,8 @@ def test_predefined_chars_values():
 
 def test_chars_repr():
     hex_ = Charset.predefined(kind=Charsets.HEX)
-    assert \
-        "Charset(kind=Charsets.HEX, characters='0123456789abcdef')" == repr(hex_)
+    assert repr(hex_) == \
+        "Charset(kind=Charsets.HEX, characters='0123456789abcdef')"
 
 
 def test_chars_iter():
