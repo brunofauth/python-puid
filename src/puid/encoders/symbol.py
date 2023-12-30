@@ -1,4 +1,8 @@
-def symbol():
+from __future__ import annotations
+from collections.abc import Callable
+
+
+def symbol() -> Callable[[int], int]:
     bang = ord("!")
     hash_symbol = ord("#") - 1
     open_paren = ord("(") - 5
@@ -7,7 +11,7 @@ def symbol():
     close_square_bracket = ord("]") - 21
     open_curly_bracket = ord("{") - 24
 
-    def encode(n):
+    def encode(n: int) -> int:
         if n == 0:
             return bang
         if n < 5:

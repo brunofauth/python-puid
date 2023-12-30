@@ -31,7 +31,9 @@ def bit_shifts(n_chars):
     def shift(bit):
         return (base_value | pow2(bit) - 1, n_bits_per_char - bit + 1)
 
-    return [base_shift] + [shift(bit) for bit in range(2, n_bits_per_char) if is_bit_zero(bit)]
+    return [base_shift] + [
+        shift(bit) for bit in range(2, n_bits_per_char) if is_bit_zero(bit)
+    ]
 
 
 def fill_entropy(entropy_offset, entropy_bytes, entropy_fn):
@@ -45,10 +47,12 @@ def fill_entropy(entropy_offset, entropy_bytes, entropy_fn):
         offset_byte_num = floor(entropy_offset / 8)
 
         # Move unused bytes to the left
-        entropy_bytes[0 : n_bytes - offset_byte_num] = entropy_bytes[offset_byte_num:n_bytes]
+        entropy_bytes[0:n_bytes -
+                      offset_byte_num] = entropy_bytes[offset_byte_num:n_bytes]
 
         # Fill right bytes with new random values
-        entropy_bytes[n_bytes - offset_byte_num : n_bytes] = entropy_fn(offset_byte_num)
+        entropy_bytes[n_bytes -
+                      offset_byte_num:n_bytes] = entropy_fn(offset_byte_num)
 
     return entropy_offset % 8
 
@@ -81,30 +85,28 @@ def muncher(n_chars, puid_len, entropy_fn):
     entropy_offset = n_entropy_bits
     entropy_bytes = bytearray(buffer_len)
 
-    def pow2(bit):
-        return round(pow(2, bit))
-
-    def is_pow2(n):
-        return pow2(round(log2(n))) == n
-
-    counter = list(range(puid_len))
-
     def sliced_value():
         nonlocal entropy_offset
         if n_entropy_bits < entropy_offset + n_bits_per_char:
-            entropy_offset = fill_entropy(entropy_offset, entropy_bytes, entropy_fn)
+            entropy_offset = fill_entropy(
+                entropy_offset,
+                entropy_bytes,
+                entropy_fn,
+            )
         return value_at(entropy_offset, n_bits_per_char, entropy_bytes)
 
-    if is_pow2(n_chars):
+    # Checks if n_chars is a power of two
+    if n_chars.bit_count() == 1:
         #  When chars count is a power of 2, sliced bits always yield a valid value
         def bits_muncher():
+
             def slice_value():
                 nonlocal entropy_offset
                 value = sliced_value()
                 entropy_offset += n_bits_per_char
                 return value
 
-            puid = [slice_value() for _ in counter]
+            puid = [slice_value() for _ in range(puid_len)]
             return puid
 
         return bits_muncher
@@ -138,6 +140,6 @@ def muncher(n_chars, puid_len, entropy_fn):
         return slice_value()
 
     def bits_muncher():
-        return [slice_value() for _ in counter]
+        return [slice_value() for _ in range(puid_len)]
 
     return bits_muncher

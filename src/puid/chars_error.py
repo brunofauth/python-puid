@@ -22,13 +22,5 @@ class NonUniqueChars(CharsError):
     pass
 
 
-class TooFewChars(CharsError):
-    """Raised when characters string contains too few characters"""
-
-    pass
-
-
-class TooManyChars(CharsError):
-    """Raised when characters string contains too many characters"""
-
+class LengthOutOfBounds(CharsError):
     pass

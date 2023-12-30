@@ -1,10 +1,20 @@
-[build-system]
-requires = [
-    "setuptools>=68.0.0",
-    "wheel",
-]
+[tool.poetry]
+name = "puid"
+version = "0.1.0"
+description = "my take on dingosky's Simple, flexible and efficient generation of probably unique identifiers (`puid`, AKA random strings) of intuitively specified entropy using pre-defined or custom characters, including unicode"
+authors = ["Your Name <you@example.com>"]
+license = "MIT"
+readme = "README.md"
 
-[tool.black]
-line-length = 140
-target-version = ['py37']
-skip-string-normalization = true
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+scipy = "^1.11.4"
+mypy = "^1.8.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

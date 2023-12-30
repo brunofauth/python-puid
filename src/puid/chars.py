@@ -1,37 +1,58 @@
+from __future__ import annotations
+
+import dataclasses as dc
 from enum import Enum
+from collections.abc import Iterable
+from puid.chars_error import InvalidChars, NonUniqueChars, LengthOutOfBounds
 
-from puid.chars_error import InvalidChars, NonUniqueChars, TooFewChars, TooManyChars
+
+def CharsetMeta(type):
+
+    def __call__(self, *args, **kwargs):
+        raise RuntimeError(
+            "Instantiate this class through one of it's constructor classmethods"
+        )
 
 
-def valid_chars(chars):
-    """
-    Tests whether characters are valid.
+@dc.dataclass(frozen=True, slots=True)
+class Charset:
+    kind: Charsets
+    characters: str
 
-    raises A CharsError subclass if characters are not valid.
+    def __len__(self) -> int:
+        return len(self.characters)
 
-    >>> valid_chars(Chars.HEX)
-    True
+    def __iter__(self) -> Iterable[str]:
+        yield from self.characters
 
-    >>> valid_chars('dingosky')
-    True
-    """
-    if isinstance(chars, Chars):
-        return True
+    @classmethod
+    def predefined(cls, kind: Charsets) -> Charset:
+        instance = cls.__new__(cls)
+        cls.__init__(instance, kind=kind, characters=kind.value)
+        return instance
 
-    if not isinstance(chars, str):
-        raise InvalidChars('Characters must be a str')
+    @classmethod
+    def custom(cls, characters: str) -> Charset:
+        is_valid_charset(characters)
+        instance = cls.__new__(cls)
+        cls.__init__(instance, kind=Charsets.CUSTOM, characters=characters)
+        return instance
 
+
+print(type(Charset))
+
+
+def is_valid_charset(chars: str) -> bool:
     min_len = 2
     max_len = 256
 
-    if len(chars) < min_len:
-        raise TooFewChars(f'Must have at least {min_len} characters')
-
-    if 256 < len(chars):
-        raise TooManyChars(f'Exceeded max of {max_len} characters')
+    if len(chars) not in range(min_len, max_len + 1):
+        raise LengthOutOfBounds(
+            f'Charsets must be [{min_len}-{max_len}] long. Yours is {len(chars)}'
+        )
 
     if len(chars) != len(set(chars)):
-        raise NonUniqueChars('Characters are not unique')
+        raise NonUniqueChars('Some characters repeat in your charset')
 
     for char in chars:
         if not _valid_char(char):
@@ -40,7 +61,7 @@ def valid_chars(chars):
     return True
 
 
-def _valid_char(char):
+def _valid_char(char: str) -> bool:
     code_point = ord(char)
 
     if 160 < code_point:
@@ -50,11 +71,7 @@ def _valid_char(char):
         return True
     if code_point < ord('#'):
         return False
-    if char == "'":
-        return False
-    if char == '\\':
-        return False
-    if char == '`':
+    if char in ("'", '\\', '`'):
         return False
     if ord('~') < code_point:
         return False
@@ -62,12 +79,14 @@ def _valid_char(char):
     return True
 
 
-class Chars(Enum):
+class Charsets(Enum):
     """
     Predefined Characters
 
     These enums are intended to be passed to the `Puid` class initializer for configuration
     """
+
+    CUSTOM = ""
 
     ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
     ALPHA_LOWER = 'abcdefghijklmnopqrstuvwxyz'
@@ -92,68 +111,8 @@ class Chars(Enum):
     def __len__(self):
         return len(self.value)
 
-
-class ValidChars:
-    """Base class for PredefinedChars and CustomChars"""
-
-    def __repr__(self):
-        return "{0} -> '{1}'".format(self.name, self.value)
-
-    def __len__(self):
-        return len(self.value)
-
-    def __iter__(self):
-        return iter(self.value)
-
-
-class PredefinedChars(ValidChars):
-    """
-    Class for Predefined Chars
-
-    raises InvalidChars if initialized with anything other than a predefined Chars enum
-
-    >>> hex_upper = PredefinedChars(Chars.HEX_UPPER)
-
-    This class is intended for internal use
-    """
-
-    def __init__(self, chars):
-        """
-        Create a PredefinedChars for Chars enum
-
-        :param chars: Chars enum
-        """
-        if isinstance(chars, Chars):
-            self.name = chars.name
-            self.value = chars.value
-        else:
-            raise InvalidChars('PredefinedChars only accepts members of the Chars enum')
-
-
-class CustomChars(ValidChars):
-    """
-    Class for Custom Chars
-
-    raises CharsError if initialized with an string of characters that are invalid
-    raises InvalidChars if initialized with a predefined Chars enum
-
-    >>> dingosky = CustomChars('dingosky')
-
-    This class is intended for internal use
-    """
-
-    def __init__(self, chars):
-        """
-        Create a CustomChars for a string of characters
-
-        :param chars: A valid string of characters
-        """
-        if isinstance(chars, Chars):
-            raise InvalidChars('Use class PredefinedChars for members of the Chars enum')
-        else:
-            valid_chars(chars)
-            self.name = 'Custom'
-            self.value = chars
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}.{self.name}"
 
 
 if __name__ == '__main__':  # pragma: no cover

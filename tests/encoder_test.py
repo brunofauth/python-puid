@@ -1,30 +1,31 @@
-from puid import Chars
-from puid.encoder import encoder
+from puid.chars import Charsets, Charset
+from puid.encoder import get_encoder
 
 
-def encoder_chars(chars):
-    chars_encoder = encoder(chars)
+def encoder_chars(chars: Charsets) -> None:
+    charset = Charset.predefined(chars)
+    chars_encoder = get_encoder(charset)
     encoded = "".join([chr(chars_encoder(code)) for code in range(len(chars))])
-    assert encoded == chars.value
+    assert encoded == charset.characters
 
 
 def test_encoders():
-    encoder_chars(Chars.ALPHA)
-    encoder_chars(Chars.ALPHA_LOWER)
-    encoder_chars(Chars.ALPHA_UPPER)
-    encoder_chars(Chars.ALPHANUM)
-    encoder_chars(Chars.ALPHANUM_LOWER)
-    encoder_chars(Chars.ALPHANUM_UPPER)
-    encoder_chars(Chars.BASE16)
-    encoder_chars(Chars.BASE32)
-    encoder_chars(Chars.BASE32_HEX)
-    encoder_chars(Chars.BASE32_HEX_UPPER)
-    encoder_chars(Chars.CROCKFORD32)
-    encoder_chars(Chars.DECIMAL)
-    encoder_chars(Chars.HEX)
-    encoder_chars(Chars.HEX_UPPER)
-    encoder_chars(Chars.SAFE_ASCII)
-    encoder_chars(Chars.SAFE32)
-    encoder_chars(Chars.SAFE64)
-    encoder_chars(Chars.SYMBOL)
-    encoder_chars(Chars.WORD_SAFE32)
+    encoder_chars(Charsets.ALPHA)
+    encoder_chars(Charsets.ALPHA_LOWER)
+    encoder_chars(Charsets.ALPHA_UPPER)
+    encoder_chars(Charsets.ALPHANUM)
+    encoder_chars(Charsets.ALPHANUM_LOWER)
+    encoder_chars(Charsets.ALPHANUM_UPPER)
+    encoder_chars(Charsets.BASE16)
+    encoder_chars(Charsets.BASE32)
+    encoder_chars(Charsets.BASE32_HEX)
+    encoder_chars(Charsets.BASE32_HEX_UPPER)
+    encoder_chars(Charsets.CROCKFORD32)
+    encoder_chars(Charsets.DECIMAL)
+    encoder_chars(Charsets.HEX)
+    encoder_chars(Charsets.HEX_UPPER)
+    encoder_chars(Charsets.SAFE_ASCII)
+    encoder_chars(Charsets.SAFE32)
+    encoder_chars(Charsets.SAFE64)
+    encoder_chars(Charsets.SYMBOL)
+    encoder_chars(Charsets.WORD_SAFE32)

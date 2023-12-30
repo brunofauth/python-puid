@@ -1,4 +1,9 @@
-from puid.chars import Chars
+from __future__ import annotations
+
+import typing
+from collections.abc import Callable
+
+from puid.chars import Charsets, Charset
 from puid.encoders.alpha import alpha
 from puid.encoders.alpha import alpha_lower
 from puid.encoders.alpha import alpha_upper
@@ -10,7 +15,6 @@ from puid.encoders.base32 import base32
 from puid.encoders.base32 import base32_hex
 from puid.encoders.base32 import base32_hex_upper
 from puid.encoders.crockford32 import crockford32
-from puid.encoders.custom import custom
 from puid.encoders.decimal import decimal
 from puid.encoders.hex import hex_lower
 from puid.encoders.hex import hex_upper
@@ -20,63 +24,37 @@ from puid.encoders.safe_ascii import safe_ascii
 from puid.encoders.symbol import symbol
 from puid.encoders.word_safe32 import word_safe32
 
+from puid.encoders.custom import custom
 
-def encoder(chars: Chars):
-    if chars.name == Chars.ALPHA.name:
-        return alpha()
+Encoder = Callable[[int], int]
+EncoderFactory = Callable[[], Encoder]
 
-    if chars.name == Chars.ALPHA_LOWER.name:
-        return alpha_lower()
+_ENCODERS: dict[Charsets, EncoderFactory] = {
+    Charsets.ALPHA: alpha,
+    Charsets.ALPHA_LOWER: alpha_lower,
+    Charsets.ALPHA_UPPER: alpha_upper,
+    Charsets.ALPHANUM: alphanum,
+    Charsets.ALPHANUM_LOWER: alphanum_lower,
+    Charsets.ALPHANUM_UPPER: alphanum_upper,
+    Charsets.BASE16: base16,
+    Charsets.BASE32: base32,
+    Charsets.BASE32_HEX: base32_hex,
+    Charsets.BASE32_HEX_UPPER: base32_hex_upper,
+    Charsets.CROCKFORD32: crockford32,
+    Charsets.DECIMAL: decimal,
+    Charsets.HEX: hex_lower,
+    Charsets.HEX_UPPER: hex_upper,
+    Charsets.SAFE32: safe32,
+    Charsets.SAFE64: safe64,
+    Charsets.SAFE_ASCII: safe_ascii,
+    Charsets.SYMBOL: symbol,
+    Charsets.WORD_SAFE32: word_safe32,
+}
 
-    if chars.name == Chars.ALPHA_UPPER.name:
-        return alpha_upper()
 
-    if chars.name == Chars.ALPHANUM.name:
-        return alphanum()
-
-    if chars.name == Chars.ALPHANUM_LOWER.name:
-        return alphanum_lower()
-
-    if chars.name == Chars.ALPHANUM_UPPER.name:
-        return alphanum_upper()
-
-    if chars.name == Chars.BASE16.name:
-        return base16()
-
-    if chars.name == Chars.BASE32.name:
-        return base32()
-
-    if chars.name == Chars.BASE32_HEX.name:
-        return base32_hex()
-
-    if chars.name == Chars.BASE32_HEX_UPPER.name:
-        return base32_hex_upper()
-
-    if chars.name == Chars.CROCKFORD32.name:
-        return crockford32()
-
-    if chars.name == Chars.DECIMAL.name:
-        return decimal()
-
-    if chars.name == Chars.HEX.name:
-        return hex_lower()
-
-    if chars.name == Chars.HEX_UPPER.name:
-        return hex_upper()
-
-    if chars.name == Chars.SAFE32.name:
-        return safe32()
-
-    if chars.name == Chars.SAFE64.name:
-        return safe64()
-
-    if chars.name == Chars.SAFE_ASCII.name:
-        return safe_ascii()
-
-    if chars.name == Chars.SYMBOL.name:
-        return symbol()
-
-    if chars.name == Chars.WORD_SAFE32.name:
-        return word_safe32()
-
-    return custom(chars)
+def get_encoder(charset: Charset) -> Encoder:
+    match charset.kind:
+        case Charsets.CUSTOM:
+            return custom(charset.characters)
+        case other:
+            return _ENCODERS[other]()

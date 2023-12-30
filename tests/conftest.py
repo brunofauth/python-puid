@@ -3,12 +3,13 @@ from collections import namedtuple
 
 import pytest
 
-from puid import Chars
+from puid import Charsets
 from puid import Puid
 
 
 class Util:
-    Params = namedtuple('Params', 'bin_file mod_name total risk chars ids_count')
+    Params = namedtuple('Params',
+                        'bin_file mod_name total risk chars ids_count')
 
     @staticmethod
     def fixed_bytes(hex_string):
@@ -25,7 +26,7 @@ class Util:
 
         def get_bytes(n_bytes):
             nonlocal offset
-            offset_bytes = bytes[offset : offset + n_bytes]
+            offset_bytes = bytes[offset:offset + n_bytes]
             offset += n_bytes
             return offset_bytes
 
@@ -66,43 +67,43 @@ class Util:
     @staticmethod
     def predefined(name):
         if name == 'alpha':
-            return Chars.ALPHA
+            return Charsets.ALPHA
         if name == 'alpha_lower':
-            return Chars.ALPHA_LOWER
+            return Charsets.ALPHA_LOWER
         if name == 'alpha_upper':
-            return Chars.ALPHA_UPPER
+            return Charsets.ALPHA_UPPER
         if name == 'alphanum':
-            return Chars.ALPHANUM
+            return Charsets.ALPHANUM
         if name == 'alphanum_lower':
-            return Chars.ALPHANUM_LOWER
+            return Charsets.ALPHANUM_LOWER
         if name == 'alphanum_upper':
-            return Chars.ALPHANUM_UPPER
+            return Charsets.ALPHANUM_UPPER
         if name == 'base16':
-            return Chars.BASE16
+            return Charsets.BASE16
         if name == 'base32':
-            return Chars.BASE32
+            return Charsets.BASE32
         if name == 'base32_hex':
-            return Chars.BASE32_HEX
+            return Charsets.BASE32_HEX
         if name == 'base32_hex_upper':
-            return Chars.BASE32_HEX_UPPER
+            return Charsets.BASE32_HEX_UPPER
         if name == 'crockford32':
-            return Chars.CROCKFORD32
+            return Charsets.CROCKFORD32
         if name == 'decimal':
-            return Chars.DECIMAL
+            return Charsets.DECIMAL
         if name == 'hex':
-            return Chars.HEX
+            return Charsets.HEX
         if name == 'hex_upper':
-            return Chars.HEX_UPPER
+            return Charsets.HEX_UPPER
         if name == 'safe_ascii':
-            return Chars.SAFE_ASCII
+            return Charsets.SAFE_ASCII
         if name == 'safe32':
-            return Chars.SAFE32
+            return Charsets.SAFE32
         if name == 'safe64':
-            return Chars.SAFE6
+            return Charsets.SAFE6
         if name == 'symbol':
-            return Chars.SYMBOL
+            return Charsets.SYMBOL
         if name == 'word_safe32':
-            return Chars.WORD_SAFE32
+            return Charsets.WORD_SAFE32
 
         return None
 
@@ -110,7 +111,10 @@ class Util:
     def rand_id_mod(dir_name):
         params = Util.params(dir_name)
         rand_bytes = Util.file_bytes(params.bin_file)
-        return Puid(total=params.total, risk=params.risk, chars=params.chars, entropy_source=rand_bytes)
+        return Puid(total=params.total,
+                    risk=params.risk,
+                    charset=params.chars,
+                    entropy_source=rand_bytes)
 
     @staticmethod
     def test_data(data_name):
