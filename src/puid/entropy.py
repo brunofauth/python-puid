@@ -20,10 +20,7 @@ def bits_for_total_risk(total: int, risk: float) -> float:
     if total < 0 or risk < 0:
         raise TotalRiskError('total and risk must be non-negative')
 
-    if total in [0, 1]:
-        return 0
-
-    if risk in [0, 1]:
+    if total in [0, 1] or risk in [0, 1]:
         return 0
 
     if total < 1000:
@@ -79,7 +76,7 @@ def len_for_bits(chars, bits):
     return ceil(bits / bits_per_char(chars))
 
 
-if __name__ == '__main__':  # pragma: no cover
+if __name__ == '__main__':   # pragma: no cover
     import doctest
 
     doctest.testmod()
